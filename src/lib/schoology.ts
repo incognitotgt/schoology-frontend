@@ -1,7 +1,7 @@
-import type { Credentials } from "@/types/cookies";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import OAuth from "oauth-1.0a";
+import type { Credentials } from "@/types/cookies";
 /**
  * @param contentType Content type of the request
  * @param returns Type of response to return
@@ -17,9 +17,10 @@ export type SchoologyRequestInit = Omit<RequestInit, "headers"> & {
  * @param options Request options
  * @returns The response from the API
  */
+// biome-ignore lint/suspicious/noExplicitAny: there arent any types
 export type SchoologyInstance = (path: string, options?: SchoologyRequestInit | undefined) => Promise<any>;
-export function getSchoology(): SchoologyInstance {
-	const authCookie = cookies().get("credentials");
+export async function getSchoology(): Promise<SchoologyInstance> {
+	const authCookie = (await cookies()).get("credentials");
 	if (!authCookie) return redirect("/");
 	const { cKey, cSecret }: Credentials = JSON.parse(authCookie.value);
 	if (!cKey || !cSecret) return redirect("/");

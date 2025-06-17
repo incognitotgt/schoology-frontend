@@ -1,4 +1,4 @@
-function throttle<T extends (...args: any[]) => void>(delay: number, func: T): T {
+function throttle<T extends (...args: unknown[]) => void>(delay: number, func: T): T {
 	let lastCallTime = 0;
 	let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
