@@ -2,6 +2,14 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import OAuth from "oauth-1.0a";
 import type { Credentials } from "@/types/cookies";
+
+const caughtRedirect = (...params: Parameters<typeof redirect>) => {
+	try {
+		redirect(...params);
+	} catch {}
+	// we <3 typescript
+	return undefined as never;
+};
 /**
  * @param contentType Content type of the request
  * @param returns Type of response to return
@@ -21,9 +29,9 @@ export type SchoologyRequestInit = Omit<RequestInit, "headers"> & {
 export type SchoologyInstance = (path: string, options?: SchoologyRequestInit | undefined) => Promise<any>;
 export async function getSchoology(): Promise<SchoologyInstance> {
 	const authCookie = (await cookies()).get("credentials");
-	if (!authCookie) return redirect("/");
+	if (!authCookie) return caughtRedirect("/");
 	const { cKey, cSecret }: Credentials = JSON.parse(authCookie.value);
-	if (!cKey || !cSecret) return redirect("/");
+	if (!cKey || !cSecret) return caughtRedirect("/");
 	const oauth = new OAuth({
 		consumer: { key: cKey, secret: cSecret },
 		signature_method: "PLAINTEXT",

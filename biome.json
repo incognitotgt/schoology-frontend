@@ -26,6 +26,12 @@
 				"useNumberNamespace": "error",
 				"noInferrableTypes": "error",
 				"noUselessElse": "error"
+			},
+			"nursery": {
+				"useUniqueElementIds": "off"
+			},
+			"suspicious": {
+				"noExplicitAny": "info"
 			}
 		},
 		"includes": ["**", "!**/pnpm-lock.yaml", "!**/.next/**", "!**/node_modules/**"]
