@@ -1,11 +1,15 @@
-import { getSchoology } from "@/lib/schoology";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default async function Index() {
-	const schoology = await getSchoology();
-	const { school } = await schoology("/schools");
 	return (
-		<main className="flex h-full justify-center items-center flex-col text-wrap">
-			<p>Your district/school is {school[0].title}</p>
+		<main className="flex pt-6 items-center justify-center flex-col text-wrap">
+			<Tabs defaultValue="course_updates">
+				<TabsList>
+					<TabsTrigger value="course_updates">Course Updates</TabsTrigger>
+					<TabsTrigger value="group_updates">Group Updates</TabsTrigger>
+					<TabsTrigger value="grades">Recent Grades</TabsTrigger>
+				</TabsList>
+			</Tabs>
 		</main>
 	);
 }

@@ -45,9 +45,9 @@ export function AppSidebar({ school, user }: { school: any; user: any }) {
 	const { theme, themes, setTheme } = useTheme();
 	return (
 		<Sidebar>
-			<SidebarHeader className="flex flex-row items-center justify-center p-4">
-				<GraduationCap className="size-4" />
-				<h1 className="font-bold">{school?.title || "Schoology"}</h1>
+			<SidebarHeader className="flex flex-row items-center px-4 pt-4 -pb-4 text-sidebar-primary">
+				<GraduationCap className="size-5" />
+				<h1 className="font-bold text-xl">{school?.title || "Schoology"}</h1>
 			</SidebarHeader>
 			<SidebarContent>
 				<GroupComponent
@@ -59,7 +59,7 @@ export function AppSidebar({ school, user }: { school: any; user: any }) {
 						{ title: "Messages", icon: <Mail />, href: "/messages" },
 						{ title: "Notifications", icon: <Bell />, href: "/notifications" },
 					]}
-					title=""
+					title="Main"
 				/>
 			</SidebarContent>
 			<SidebarFooter>
