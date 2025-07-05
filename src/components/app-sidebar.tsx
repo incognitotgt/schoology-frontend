@@ -46,7 +46,7 @@ export function AppSidebar({ school, user }: { school: any; user: any }) {
 	return (
 		<Sidebar>
 			<SidebarHeader className="flex flex-row items-center px-4 pt-4 -pb-4 text-sidebar-primary">
-				<GraduationCap className="size-5" />
+				<GraduationCap className="size-5 shrink-0" />
 				<h1 className="font-bold text-xl">{school?.title || "Schoology"}</h1>
 			</SidebarHeader>
 			<SidebarContent>

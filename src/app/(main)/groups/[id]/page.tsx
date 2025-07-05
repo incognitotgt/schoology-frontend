@@ -1,7 +1,3 @@
-import { Heart, HeartOff } from "lucide-react";
-import { revalidatePath } from "next/cache";
-import Image from "next/image";
-import { ClientDate } from "@/components/date";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -10,8 +6,7 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import Update from "@/components/update";
 import { getSchoology } from "@/lib/schoology";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
@@ -47,48 +42,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 				</BreadcrumbList>
 			</Breadcrumb>
 			{updates.map((update) => (
-				<Card key={update.id} className="h-auto w-full flex flex-col justify-start">
-					<CardHeader>
-						<CardTitle className="truncate flex gap-2 items-center font-semibold">
-							<Image
-								src={
-									updateSenders.find((val) => val?.id === update?.uid)?.picture_url ||
-									"https://asset-cdn.schoology.com/sites/all/themes/schoology_theme/images/user-default.svg"
-								}
-								alt="profile"
-								width={170}
-								height={170}
-								className="rounded-full aspect-square bg-cover bg-center object-cover size-4 inline"
-							/>
-							{updateSenders.find((val) => val?.id === update.uid)?.name_display || update.uid}
-						</CardTitle>
-						<CardDescription>
-							<ClientDate>{new Date(update.created * 1000).toLocaleString()}</ClientDate>
-						</CardDescription>
-					</CardHeader>
-					<CardContent>{update.body}</CardContent>
-					<CardFooter>
-						<form
-							action={async () => {
-								"use server";
-								const schoology = await getSchoology();
-								await schoology(`/like/${update.id}`, {
-									method: "POST",
-									body: JSON.stringify({
-										id,
-										like_action: !update.user_like_action,
-									}),
-								});
-								revalidatePath(`/groups/${id}`);
-							}}
-						>
-							<Button variant={update.user_like_action ? "default" : "outline"} type="submit">
-								{update.user_like_action ? <HeartOff className="size-6 mr-2" /> : <Heart className="size-6 mr-2" />}
-								{update.likes}
-							</Button>
-						</form>
-					</CardFooter>
-				</Card>
+				<Update key={update.id} updateSenders={updateSenders} update={update} id={id} />
 			))}
 		</main>
 	);
