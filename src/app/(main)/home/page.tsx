@@ -67,6 +67,7 @@ export default async function Index() {
 								update={update}
 								id={update.sectionId}
 								name={update.sectionTitle}
+								path="/"
 							/>
 						))
 					) : (
@@ -82,6 +83,7 @@ export default async function Index() {
 								update={update}
 								id={update.groupId}
 								name={update.groupTitle}
+								path="/"
 							/>
 						))
 					) : (

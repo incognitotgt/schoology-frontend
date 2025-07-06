@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import OAuth from "oauth-1.0a";
 import type { Credentials } from "@/types/cookies";
 
+let limit = false;
+
 const caughtRedirect = (...params: Parameters<typeof redirect>) => {
 	try {
 		redirect(...params);
@@ -52,9 +54,11 @@ export async function getSchoology(): Promise<SchoologyInstance> {
 			},
 		});
 		let res = await fetch(`https://api.schoology.com/v1${path}`, responseOpts());
-		if (res.status === 429) {
-			await new Promise((resolve) => setTimeout(resolve, 3000));
+		if (res.status === 429 || limit) {
+			limit = true;
+			await new Promise((resolve) => setTimeout(resolve, Number(res.headers.get("Retry-After")) * 1000));
 			res = await fetch(`https://api.schoology.com/v1${path}`, responseOpts());
+			limit = false;
 		}
 		if ([401, 403].includes(res.status)) {
 			return { error: await res.text() };

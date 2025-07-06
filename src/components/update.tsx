@@ -6,7 +6,7 @@ import { ClientDate } from "@/components/date";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { getSchoology } from "@/lib/schoology";
-export default function Update({
+export default async function Update({
 	update,
 	updateSenders,
 	id,
@@ -17,7 +17,7 @@ export default function Update({
 	updateSenders: any[];
 	id: string;
 	name?: string;
-	path?: string;
+	path: string;
 }) {
 	return (
 		<Card key={update.id} className="h-auto w-full flex flex-col justify-start">
@@ -57,7 +57,7 @@ export default function Update({
 								like_action: !update.user_like_action,
 							}),
 						});
-						revalidatePath(path || `/groups/${id}`);
+						revalidatePath(path);
 					}}
 				>
 					<Button variant={update.user_like_action ? "default" : "outline"} type="submit">

@@ -38,7 +38,6 @@ export default async function Page({ params }: { params: Promise<{ id: string; f
 				.map((recipient: number) => `<request>/v1/users/${recipient}</request>`)}</requests>`,
 		}).catch(notFound)
 	).response.map((response: any) => response.body);
-
 	return (
 		<main className="flex h-full flex-col text-wrap items-center py-4 mb-2">
 			<Card className="h-auto w-[80%] flex flex-col justify-center">
@@ -88,7 +87,7 @@ export default async function Page({ params }: { params: Promise<{ id: string; f
 				</CardHeader>
 				<CardContent className="flex flex-col items-center justify-start gap-2">
 					{messages.map((message, index) => (
-						<Fragment key={message.id}>
+						<Fragment key={message.message}>
 							<div className="h-auto w-full flex flex-col justify-start">
 								<CardHeader>
 									<div className="truncate flex gap-2 items-center font-semibold">
@@ -195,7 +194,7 @@ export default async function Page({ params }: { params: Promise<{ id: string; f
 							name="message"
 							id="message"
 							placeholder="Type your message here..."
-							className="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0"
+							className="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0 bg-background"
 						/>
 						<div className="flex items-center p-3 pt-0">
 							<Tooltip>

@@ -42,7 +42,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 				</BreadcrumbList>
 			</Breadcrumb>
 			{updates.map((update) => (
-				<Update key={update.id} updateSenders={updateSenders} update={update} id={id} />
+				<Update key={update.id} updateSenders={updateSenders} update={update} id={id} path={`/groups/${id}`} />
 			))}
 		</main>
 	);
