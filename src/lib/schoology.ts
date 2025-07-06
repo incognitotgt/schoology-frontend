@@ -1,7 +1,17 @@
-import type { Credentials } from "@/types/cookies";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import OAuth from "oauth-1.0a";
+import type { Credentials } from "@/types/cookies";
+
+let limit = false;
+
+const caughtRedirect = (...params: Parameters<typeof redirect>) => {
+	try {
+		redirect(...params);
+	} catch {}
+	// we <3 typescript
+	return undefined as never;
+};
 /**
  * @param contentType Content type of the request
  * @param returns Type of response to return
@@ -17,12 +27,13 @@ export type SchoologyRequestInit = Omit<RequestInit, "headers"> & {
  * @param options Request options
  * @returns The response from the API
  */
+// biome-ignore lint/suspicious/noExplicitAny: there arent any types
 export type SchoologyInstance = (path: string, options?: SchoologyRequestInit | undefined) => Promise<any>;
-export function getSchoology(): SchoologyInstance {
-	const authCookie = cookies().get("credentials");
-	if (!authCookie) return redirect("/");
+export async function getSchoology(): Promise<SchoologyInstance> {
+	const authCookie = (await cookies()).get("credentials");
+	if (!authCookie) return caughtRedirect("/");
 	const { cKey, cSecret }: Credentials = JSON.parse(authCookie.value);
-	if (!cKey || !cSecret) return redirect("/");
+	if (!cKey || !cSecret) return caughtRedirect("/");
 	const oauth = new OAuth({
 		consumer: { key: cKey, secret: cSecret },
 		signature_method: "PLAINTEXT",
@@ -43,9 +54,11 @@ export function getSchoology(): SchoologyInstance {
 			},
 		});
 		let res = await fetch(`https://api.schoology.com/v1${path}`, responseOpts());
-		if (res.status === 429) {
-			await new Promise((resolve) => setTimeout(resolve, 3000));
+		if (res.status === 429 || limit) {
+			limit = true;
+			await new Promise((resolve) => setTimeout(resolve, Number(res.headers.get("Retry-After")) * 1000));
 			res = await fetch(`https://api.schoology.com/v1${path}`, responseOpts());
+			limit = false;
 		}
 		if ([401, 403].includes(res.status)) {
 			return { error: await res.text() };

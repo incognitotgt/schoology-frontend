@@ -1,16 +1,16 @@
+import "./globals.css";
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
-import "./globals.css";
+import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { ThemeProvider } from "next-themes";
 
 const fontSans = Inter({ subsets: ["latin"], variable: "--sans" });
 const fontMono = JetBrains_Mono({ subsets: ["latin"], variable: "--mono" });
 
 export const metadata: Metadata = {
 	title: "Schoology",
-	description: "idk some frontend",
+	description: "An alternative frontend for Schoology",
 };
 
 export default function RootLayout({
@@ -24,7 +24,7 @@ export default function RootLayout({
 				<ThemeProvider
 					attribute="class"
 					defaultTheme="system"
-					themes={["light", "dark", "slate", "zinc"]}
+					themes={["light", "dark"]}
 					enableSystem
 					disableTransitionOnChange
 				>

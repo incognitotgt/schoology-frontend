@@ -1,14 +1,14 @@
 "use client";
 
+import { GraduationCap } from "lucide-react";
 import { signOut } from "@/actions/accounts";
 import { Button } from "@/components/ui/button";
-import { RocketIcon } from "@radix-ui/react-icons";
 export default function ErrorPage({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
 	return (
 		<div className="flex h-full flex-col items-center justify-center">
 			<div className="flex h-[32rem] w-96 flex-col items-center justify-center gap-4">
 				<div className="mb-4 flex items-center justify-center text-left text-2xl font-bold">
-					<RocketIcon />
+					<GraduationCap />
 					<span className="ml-2 text-2xl font-bold">Schoology</span>
 				</div>
 				<p className="text-center text-6xl font-bold text-primary">Error</p>

@@ -1,15 +1,15 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { getSchoology } from "@/lib/schoology";
 import { cookies } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getSchoology } from "@/lib/schoology";
 
 export default async function Page() {
-	const schoology = getSchoology();
-	const { group }: { group: any[] } = await schoology(`/users/${cookies().get("userId")?.value}/groups`);
+	const schoology = await getSchoology();
+	const { group }: { group: any[] } = await schoology(`/users/${(await cookies()).get("userId")?.value}/groups`);
 	return (
 		<main className="flex h-full flex-col text-wrap">
-			<section className="flex items-center justify-start mt-4 ml-12 pt-4 pb-1">
+			<section className="flex justify-start mt-4 ml-12 pt-4 pb-1">
 				<h1 className="text-4xl font-bold">Groups</h1>
 			</section>
 			<section className=" grid-rows-subgrid gap-4 3xl:grid-cols-6 4xl:grid-cols-7 grid place-content-center place-items-center p-8 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">

@@ -1,3 +1,9 @@
+import { md5 } from "js-md5";
+import { DownloadIcon, FileIcon, Link, Send, TrashIcon } from "lucide-react";
+import { revalidatePath } from "next/cache";
+import Image from "next/image";
+import { notFound, redirect } from "next/navigation";
+import { Fragment } from "react";
 import { ClientDate } from "@/components/date";
 import {
 	AlertDialog,
@@ -17,16 +23,11 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { getSchoology } from "@/lib/schoology";
-import { DownloadIcon, FileIcon, Link1Icon, PaperPlaneIcon, TrashIcon } from "@radix-ui/react-icons";
-import { md5 } from "js-md5";
-import { revalidatePath } from "next/cache";
-import Image from "next/image";
-import { notFound, redirect } from "next/navigation";
-import { Fragment } from "react";
-export default async function Page({ params }: { params: { id: string; folder: string } }) {
-	const schoology = getSchoology();
+export default async function Page({ params }: { params: Promise<{ id: string; folder: string }> }) {
+	const schoology = await getSchoology();
+	const { id, folder } = await params;
 	const { message: messages }: { message: any[] } = await schoology(
-		`/messages/${params.folder}/${params.id}?with_attachments=TRUE`,
+		`/messages/${folder}/${id}?with_attachments=TRUE`,
 	).catch(notFound);
 	const messageRecipients: any[] = (
 		await schoology("/multiget", {
@@ -37,7 +38,6 @@ export default async function Page({ params }: { params: { id: string; folder: s
 				.map((recipient: number) => `<request>/v1/users/${recipient}</request>`)}</requests>`,
 		}).catch(notFound)
 	).response.map((response: any) => response.body);
-
 	return (
 		<main className="flex h-full flex-col text-wrap items-center py-4 mb-2">
 			<Card className="h-auto w-[80%] flex flex-col justify-center">
@@ -60,8 +60,8 @@ export default async function Page({ params }: { params: { id: string; folder: s
 								<form
 									action={async () => {
 										"use server";
-										const schoology = getSchoology();
-										await schoology(`/messages/${params.folder}/${params.id}`, {
+										const schoology = await getSchoology();
+										await schoology(`/messages/${folder}/${id}`, {
 											method: "DELETE",
 											returns: "response",
 										});
@@ -87,7 +87,7 @@ export default async function Page({ params }: { params: { id: string; folder: s
 				</CardHeader>
 				<CardContent className="flex flex-col items-center justify-start gap-2">
 					{messages.map((message, index) => (
-						<Fragment key={message.id}>
+						<Fragment key={message.message}>
 							<div className="h-auto w-full flex flex-col justify-start">
 								<CardHeader>
 									<div className="truncate flex gap-2 items-center font-semibold">
@@ -112,7 +112,7 @@ export default async function Page({ params }: { params: { id: string; folder: s
 												<Card key={link.id} className="hover:bg-secondary/70">
 													<CardHeader>
 														<CardTitle className="truncate flex gap-2 items-center">
-															<Link1Icon className="size-5 flex-shrink-0 inline" />
+															<Link className="size-5 flex-shrink-0 inline" />
 															{link.title}
 														</CardTitle>
 														<CardDescription>{link.url}</CardDescription>
@@ -144,7 +144,7 @@ export default async function Page({ params }: { params: { id: string; folder: s
 							"use server";
 							const message = data.get("message")?.toString();
 							const file = data.get("file") as File | null;
-							const schoology = getSchoology();
+							const schoology = await getSchoology();
 							let upload: any;
 							if (file) {
 								const buffer = await file.arrayBuffer();
@@ -166,8 +166,9 @@ export default async function Page({ params }: { params: { id: string; folder: s
 								}
 							}
 							console.log(upload);
+							// uploading is broken
 							if (message) {
-								await schoology(`/messages/${params.id}`, {
+								await schoology(`/messages/${id}`, {
 									method: "POST",
 									body: JSON.stringify({
 										subject: messages[0].subject,
@@ -193,14 +194,14 @@ export default async function Page({ params }: { params: { id: string; folder: s
 							name="message"
 							id="message"
 							placeholder="Type your message here..."
-							className="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0"
+							className="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0 bg-background"
 						/>
 						<div className="flex items-center p-3 pt-0">
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<Button variant="ghost" size="icon" asChild>
 										<Label htmlFor="file">
-											<Link1Icon className="size-4" />
+											<Link className="size-4" />
 											<span className="sr-only">Attach file</span>
 										</Label>
 									</Button>
@@ -210,7 +211,7 @@ export default async function Page({ params }: { params: { id: string; folder: s
 							<input hidden type="file" id="file" name="file" />
 							<Button type="submit" size="sm" className="ml-auto gap-1.5">
 								Send Message
-								<PaperPlaneIcon className="size-3.5" />
+								<Send className="size-3.5" />
 							</Button>
 						</div>
 					</form>

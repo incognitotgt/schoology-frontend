@@ -1,9 +1,9 @@
-import { UpdateIcon } from "@radix-ui/react-icons";
+import { LoaderPinwheel } from "lucide-react";
 
 export default function Loading() {
 	return (
 		<div className="flex justify-center flex-col items-center h-screen">
-			<UpdateIcon className="animate-spin" />
+			<LoaderPinwheel className="animate-spin" />
 		</div>
 	);
 }

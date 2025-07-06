@@ -1,3 +1,4 @@
+import { File, LayoutDashboard, Lock, type LucideIcon } from "lucide-react";
 import { ClientDate } from "@/components/date";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,22 +11,19 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getSchoology } from "@/lib/schoology";
-import { DashboardIcon, FileIcon, LockClosedIcon } from "@radix-ui/react-icons";
-import type { IconProps } from "@radix-ui/react-icons/dist/types";
 
-export default async function Page({ params }: { params: { id: string } }) {
-	const schoology = getSchoology();
-	const section = await schoology(`/sections/${params.id}`);
-	const { assignment: assignments }: { assignment: any[] } = await schoology(`/sections/${params.id}/assignments`);
-	const assignmentTypesMap: Record<
-		string,
-		React.ForwardRefExoticComponent<IconProps & React.RefAttributes<SVGSVGElement>>
-	> = {
-		basic: FileIcon,
-		lti_submission: DashboardIcon,
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+	const schoology = await getSchoology();
+	const section = await schoology(`/sections/${(await params).id}`);
+	const { assignment: assignments }: { assignment: any[] } = await schoology(
+		`/sections/${(await params).id}/assignments`,
+	);
+	const assignmentTypesMap: Record<string, LucideIcon> = {
+		basic: File,
+		lti_submission: LayoutDashboard,
 	};
 	return (
-		<main className="flex h-full flex-col text-wrap p-10 gap-2 mb-2">
+		<main className="flex h-full flex-col text-wrap p-10 gap-2 mb-2 w-full">
 			<Breadcrumb className="mb-4">
 				<BreadcrumbList>
 					<BreadcrumbItem>
@@ -43,7 +41,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 			</Breadcrumb>
 			{assignments.length > 0 ? (
 				assignments.map((assignment) => {
-					const Icon = assignmentTypesMap[assignment.assignment_type] || FileIcon;
+					const Icon = assignmentTypesMap[assignment.assignment_type] || File;
 					return (
 						<Card key={assignment.id} className="h-auto w-full">
 							<CardHeader>
@@ -54,7 +52,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 									</span>
 									{assignment.dropbox_locked ? (
 										<Badge variant="destructive">
-											<LockClosedIcon className="mr-2" />
+											<Lock className="mr-2" />
 											Locked
 										</Badge>
 									) : null}
@@ -65,7 +63,9 @@ export default async function Page({ params }: { params: { id: string } }) {
 									</ClientDate>
 								</CardDescription>
 							</CardHeader>
-							{assignment.description ? <CardContent className="truncate">{assignment.description}</CardContent> : null}
+							{assignment.description ? (
+								<CardContent className="text-truncate whitespace-pre-wrap">{assignment.description}</CardContent>
+							) : null}
 						</Card>
 					);
 				})
